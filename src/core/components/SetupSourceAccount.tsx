@@ -1,4 +1,4 @@
-import { Card, Container, Grid, Text, Input, Spacer, Button, Tooltip } from "@nextui-org/react"
+import { Button, Card, Container, Grid, Input, Spacer, Text, Tooltip } from "@nextui-org/react"
 import { FC } from "react"
 import { useForm } from "react-hook-form"
 import Web3 from "web3"
@@ -11,7 +11,7 @@ const schema = Joi.object({
     .required()
     .min(42)
     .max(64)
-    .custom((value, helper) => Web3.utils.isAddress(value))
+    .custom((value, helper) => Web3.utils.isAddress(value) ? value : "")
     .label("Source Account")
 })
 
@@ -26,7 +26,9 @@ const SetupSourceAccount: FC<{setSourceAccount: any}> = ({
     resolver: joiResolver(schema)
   })
   const onSubmit = handleSubmit((data) => {
-    setSourceAccount(1)
+    if (data.sourceAccount != "") {
+      setSourceAccount(data.sourceAccount)
+    }
   })
 
   return (<>
@@ -46,7 +48,7 @@ const SetupSourceAccount: FC<{setSourceAccount: any}> = ({
                        underlined
                        helperText={"ETH Source Address from where token will be sent "}
                        width="250px" status="default" color="primary"
-                       labelLeft="ETH " placeholder="0xfb0a9d38c4dc5...9ce21aa0e5c0c586b" />
+                       labelLeft="ADR " placeholder="0xfb0a9d38c4dc5...9ce21aa0e5c0c586b" />
               </Grid>
             </Grid.Container>
             <Spacer y={1} />
