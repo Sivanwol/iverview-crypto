@@ -6,6 +6,6 @@ export const UseSourceAccount = (sourceAccount, setSourceAccount) => {
   console.log(sourceAccount)
   return (<>
     {(!isMatched) ? <SetupSourceAccount setSourceAccount={setSourceAccount} /> :
-      <AccountView setSourceAccount={setSourceAccount} sourceAccount={sourceAccount} />}
+      <AccountView setSourceAccount={setSourceAccount} />}
   </>)
 }

@@ -1,10 +1,13 @@
-import { Button, Card, Container, Grid, Input, Link, Row, Spacer, Text, Tooltip } from "@nextui-org/react"
+import { Button, Card, Container, Grid, Input, Link, Loading, Row, Spacer, Text, Tooltip } from "@nextui-org/react"
 import { FC } from "react"
 import { useForm } from "react-hook-form"
 import { joiResolver } from "@hookform/resolvers/joi"
 import Joi from "joi"
 import Web3 from "web3"
 import { ChevronLeft } from "react-iconly"
+import { useAccount, useDisconnect } from "wagmi"
+import Profile from "./account/Profile"
+import ListView from "./transactions/ListView"
 
 const schema = Joi.object({
   destinationAccount: Joi.string()
@@ -16,27 +19,27 @@ const schema = Joi.object({
   amount: Joi.number().required().min(0.3).max(99)
 })
 
-const AccountView: FC<{ setSourceAccount: any, sourceAccount: string }> = ({
-                                                                             setSourceAccount,
-                                                                             sourceAccount
-                                                                           }) => {
-
-
+const AccountView: FC<{ setSourceAccount: any }> = ({
+                                                      setSourceAccount
+                                                    }) => {
   const {
     register, handleSubmit,
     formState: { errors }
   } = useForm<{ destinationAccount: string, amount: number }>({
     resolver: joiResolver(schema)
   })
+  const { address, connector, isConnected } = useAccount()
+  const { disconnect } = useDisconnect()
+  if (!isConnected) return <Loading>Loading</Loading>
   const clearSourceAddress = () => {
     setSourceAccount("")
+    disconnect()
   }
   const sendTransction = async (destAccount: string, amount: number) => {
     console.log("We rook")
   }
 
   const onSubmit = handleSubmit((data) => sendTransction(data.destinationAccount, data.amount))
-
   return (<>
     <Container justify="center">
       <Row>
@@ -52,15 +55,11 @@ const AccountView: FC<{ setSourceAccount: any, sourceAccount: string }> = ({
           <Card>
             <Card.Body>
               <Grid.Container gap={2} justify="center">
-                <Grid xs={8}>
-                  <Container>
-                    <Text h4>Source Account </Text>
-                    <Text small>{sourceAccount}</Text>
-                  </Container>
-
-                  <Container>
-
-                  </Container>
+                <Grid xs={4}>
+                  <Profile />
+                </Grid>
+                <Grid xs={4}>
+                  <ListView />
                 </Grid>
                 <Grid xs={4}>
                   <form onSubmit={onSubmit}>

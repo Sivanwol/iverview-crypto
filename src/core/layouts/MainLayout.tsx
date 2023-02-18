@@ -1,8 +1,7 @@
 import { CommonReactType } from "../CommonReactType"
 import Head from "next/head"
-import { Card, Container, Row } from "@nextui-org/react"
+import { Container, Spacer } from "@nextui-org/react"
 import { BlitzLayout } from "@blitzjs/next"
-import { Spacer } from '@nextui-org/react';
 
 const MainLayout: BlitzLayout<CommonReactType> = ({
                                           children,
@@ -16,6 +15,7 @@ const MainLayout: BlitzLayout<CommonReactType> = ({
     <Container xl>
       <Spacer y={1} />
       <Container>
+        <Spacer y={1} />
         {children}
       </Container>
     </Container>

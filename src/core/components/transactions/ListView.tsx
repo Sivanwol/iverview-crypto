@@ -1,9 +1,9 @@
 import { FC } from "react"
 import { Table } from "@nextui-org/react"
+import { useAccount } from "wagmi"
 
-const ListView: FC<{ sourceAccount: string }> = ({
-                                                   sourceAccount
-                                                 }) => {
+const ListView: FC<{}> = ({}) => {
+  const { address } = useAccount()
   return <><Table
     aria-label="Transaction List"
     css={{
@@ -27,12 +27,10 @@ const ListView: FC<{ sourceAccount: string }> = ({
       <Table.Row key="3">
         <Table.Cell>Jane Fisher</Table.Cell>
         <Table.Cell>Senior Developer</Table.Cell>
-        <Table.Cell>Active</Table.Cell>
       </Table.Row>
       <Table.Row key="4">
         <Table.Cell>William Howard</Table.Cell>
         <Table.Cell>Community Manager</Table.Cell>
-        <Table.Cell>Vacation</Table.Cell>
       </Table.Row>
     </Table.Body>
   </Table>

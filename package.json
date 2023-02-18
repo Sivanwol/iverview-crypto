@@ -37,6 +37,7 @@
     "react-dom": "18.2.0",
     "react-hook-form": "7.43.1",
     "react-iconly": "2.2.5",
+    "react-simple-ellipsis": "1.0.8",
     "ts-node": "10.9.1",
     "use-debounce": "9.0.3",
     "use-persisted-state": "0.3.3",
