@@ -3,6 +3,7 @@ import { Avatar, Container, Grid, Spacer, Text, Tooltip } from "@nextui-org/reac
 import { useAccount, useEnsAvatar, useEnsName } from "wagmi"
 import ProfileBalance from "./ProfileBalace"
 import { Ellipsis } from "react-simple-ellipsis"
+import ProfileBlock from "./ProfileBlock"
 
 const Profile: FC = () => {
 
@@ -34,6 +35,7 @@ const Profile: FC = () => {
               <Spacer y={0.5} />
             </Text>
             <ProfileBalance />
+            <ProfileBlock />
           </Container>
           <Container>
             {ensAvatar &&
