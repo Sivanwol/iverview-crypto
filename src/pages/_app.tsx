@@ -1,19 +1,19 @@
 import { AppProps, ErrorBoundary, ErrorComponent, ErrorFallbackProps } from "@blitzjs/next"
 import React from "react"
 import { withBlitz } from "src/blitz-client"
-import { configureChains, Connector, createClient, mainnet, WagmiConfig } from "wagmi"
+import { configureChains, Connector, createClient, WagmiConfig } from "wagmi"
 import { MetaMaskConnector } from "wagmi/connectors/metaMask"
 import { createTheme, NextUIProvider } from "@nextui-org/react"
 import { publicProvider } from "@wagmi/core/providers/public"
 import { InjectedConnector } from "@wagmi/connectors/injected"
-import { hardhat } from "@wagmi/chains"
+import { goerli } from "@wagmi/chains"
 
 const theme = createTheme({
   type: "dark" // it could be "light" or "dark"
 })
 
 const { chains, provider, webSocketProvider } = configureChains(
-  [mainnet, hardhat],
+  [goerli],
   [publicProvider()]
 )
 const connectors: Connector[] = [

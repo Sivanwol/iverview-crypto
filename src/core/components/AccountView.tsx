@@ -5,17 +5,18 @@ import { joiResolver } from "@hookform/resolvers/joi"
 import Joi from "joi"
 import Web3 from "web3"
 import { ChevronLeft } from "react-iconly"
-import { useAccount, useDisconnect } from "wagmi"
+import { erc20ABI, useAccount, useDisconnect, useSigner } from "wagmi"
 import Profile from "./account/Profile"
 import ListView from "./transactions/ListView"
-import { fetchEnsName, fetchToken, prepareSendTransaction, sendTransaction } from "@wagmi/core"
+import { getContract } from "@wagmi/core"
+import { BigNumber } from "ethers"
 
 const schema = Joi.object({
   destinationAccount: Joi.string()
     .required()
     .min(42)
     .max(64)
-    .custom((value, helper) => Web3.utils.isAddress(value))
+    .custom((value, helper) => Web3.utils.isAddress(value) ? value : "")
     .label("Destination Account"),
   amount: Joi.number().required().min(0.3).max(99)
 })
@@ -29,6 +30,8 @@ const AccountView: FC<{ setSourceAccount: any }> = ({
   } = useForm<{ destinationAccount: string, amount: number }>({
     resolver: joiResolver(schema)
   })
+
+  const { data: signer, isError, isLoading } = useSigner({ chainId: 5 })
   const { address, connector, isConnected } = useAccount()
   const { disconnect } = useDisconnect()
   if (!isConnected) return <Loading>Loading</Loading>
@@ -37,19 +40,20 @@ const AccountView: FC<{ setSourceAccount: any }> = ({
     setSourceAccount("")
   }
   const sendTransction = async (destAccount: string, amount: number) => {
-    const token = await fetchToken({
-      address: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6"
-    })
-    const ensName = await fetchEnsName({
-      address: `0x${destAccount.slice(2, destAccount.length)}`
-    })
-    const destAdr = `${ensName?.toString()}.${token?.symbol}`
 
-    const config = await prepareSendTransaction({
-      request: { to: destAdr as string, value: amount, gasPrice: 0.5 }
+    const data = await getContract({
+      address: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6",
+      abi: erc20ABI,
+      "signerOrProvider": signer as any
     })
+    const { hash } = await data?.transfer(`0x${destAccount.slice(2, destAccount.length)}`, BigNumber.from(amount))
 
-    const { hash } = await sendTransaction(config)
+    // const config = await prepareSendTransaction({
+    //   request: { to: `0x${destAccount.slice(2, destAccount.length)}`, value: BigNumber.from(amount), chainId: 5 }
+    //
+    // })
+    // //
+    // const { hash } = await sendTransaction(config)
     console.log(`We rook hash - ${hash}`)
   }
 
