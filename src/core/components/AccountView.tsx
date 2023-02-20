@@ -8,6 +8,7 @@ import { ChevronLeft } from "react-iconly"
 import { useAccount, useDisconnect } from "wagmi"
 import Profile from "./account/Profile"
 import ListView from "./transactions/ListView"
+import { fetchEnsName, fetchToken, prepareSendTransaction, sendTransaction } from "@wagmi/core"
 
 const schema = Joi.object({
   destinationAccount: Joi.string()
@@ -32,11 +33,24 @@ const AccountView: FC<{ setSourceAccount: any }> = ({
   const { disconnect } = useDisconnect()
   if (!isConnected) return <Loading>Loading</Loading>
   const clearSourceAddress = () => {
-    setSourceAccount("")
     disconnect()
+    setSourceAccount("")
   }
   const sendTransction = async (destAccount: string, amount: number) => {
-    console.log("We rook")
+    const token = await fetchToken({
+      address: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6"
+    })
+    const ensName = await fetchEnsName({
+      address: `0x${destAccount.slice(2, destAccount.length)}`
+    })
+    const destAdr = `${ensName?.toString()}.${token?.symbol}`
+
+    const config = await prepareSendTransaction({
+      request: { to: destAdr as string, value: amount, gasPrice: 0.5 }
+    })
+
+    const { hash } = await sendTransaction(config)
+    console.log(`We rook hash - ${hash}`)
   }
 
   const onSubmit = handleSubmit((data) => sendTransction(data.destinationAccount, data.amount))

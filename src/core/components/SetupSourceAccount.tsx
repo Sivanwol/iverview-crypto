@@ -1,18 +1,6 @@
 import { Button, Card, Container, Grid } from "@nextui-org/react"
 import { FC } from "react"
-import Web3 from "web3"
-import Joi from "joi"
 import { useConnect } from "wagmi"
-
-const sourceAccountError = "Source Address is not valid address"
-const schema = Joi.object({
-  sourceAccount: Joi.string()
-    .required()
-    .min(42)
-    .max(64)
-    .custom((value, helper) => Web3.utils.isAddress(value) ? value : "")
-    .label("Source Account")
-})
 
 const SetupSourceAccount: FC<{setSourceAccount: any}> = ({
                                                            setSourceAccount
