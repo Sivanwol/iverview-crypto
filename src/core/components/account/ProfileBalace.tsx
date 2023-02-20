@@ -6,6 +6,7 @@ const ProfileBalance: FC = () => {
   const { address } = useAccount()
   const { data, isError, isLoading } = useBalance({
     address,
+    cacheTime: 2000,
     token: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6"
   })
   if (isLoading) return <Loading color="secondary" />

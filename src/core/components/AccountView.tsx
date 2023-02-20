@@ -5,7 +5,7 @@ import { joiResolver } from "@hookform/resolvers/joi"
 import Joi from "joi"
 import Web3 from "web3"
 import { ChevronLeft } from "react-iconly"
-import { erc20ABI, useAccount, useDisconnect, useSigner } from "wagmi"
+import { erc20ABI, useAccount, useBalance, useDisconnect, useSigner } from "wagmi"
 import Profile from "./account/Profile"
 import ListView from "./transactions/ListView"
 import { getContract } from "@wagmi/core"
@@ -33,6 +33,11 @@ const AccountView: FC<{ setSourceAccount: any }> = ({
 
   const { data: signer, isError, isLoading } = useSigner({ chainId: 5 })
   const { address, connector, isConnected } = useAccount()
+  const { data: blcData } = useBalance({
+    address,
+    cacheTime: 2000,
+    token: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6"
+  })
   const { disconnect } = useDisconnect()
   if (!isConnected) return <Loading>Loading</Loading>
   const clearSourceAddress = () => {
@@ -40,21 +45,19 @@ const AccountView: FC<{ setSourceAccount: any }> = ({
     setSourceAccount("")
   }
   const sendTransction = async (destAccount: string, amount: number) => {
-
-    const data = await getContract({
-      address: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6",
-      abi: erc20ABI,
-      "signerOrProvider": signer as any
-    })
-    const { hash } = await data?.transfer(`0x${destAccount.slice(2, destAccount.length)}`, BigNumber.from(amount))
-
-    // const config = await prepareSendTransaction({
-    //   request: { to: `0x${destAccount.slice(2, destAccount.length)}`, value: BigNumber.from(amount), chainId: 5 }
-    //
-    // })
-    // //
-    // const { hash } = await sendTransaction(config)
-    console.log(`We rook hash - ${hash}`)
+    if (BigNumber.from(blcData?.value || 0) < BigNumber.from(amount)) {
+      alert("no budget")
+      return
+    } else {
+      const data = await getContract({
+        address: "0xE72c69b02B4B134fb092d0D083B287cf595ED1E6",
+        abi: erc20ABI,
+        "signerOrProvider": signer as any
+      })
+      const { hash } = await data?.transfer(`0x${destAccount.slice(2, destAccount.length)}`, BigNumber.from(amount * 1000000))
+      console.log(`We rook hash - ${hash}`)
+      alert("sent transaction")
+    }
   }
 
   const onSubmit = handleSubmit((data) => sendTransction(data.destinationAccount, data.amount))
