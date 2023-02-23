@@ -2,7 +2,7 @@
 
 This is a minimal [Blitz.js](https://github.com/blitz-js/blitz) app.
 
-# **interview-cypto**
+# **learn-cypto**
 
 ## Getting Started
 
